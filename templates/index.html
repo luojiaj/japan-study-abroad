@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}首页{% endblock %}
+
+{% block content %}
+<!-- ========== 轮播图 Hero 区域 ========== -->
+<div id="heroCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel" data-bs-interval="5000">
+    <!-- 轮播指示器 -->
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+    </div>
+    <div class="carousel-inner">
+        <!-- 第1张轮播 -->
+        <div class="carousel-item active"
+            style="background-image: url('{{ url_for('static', filename='images/hero1.svg') }}');">
+            <div class="carousel-caption">
+                <h2>🌸 开启你的日本留学之旅</h2>
+                <p>从语言学习到名校升学，樱路留学为你全程护航</p>
+                <a href="{{ url_for('programs') }}" class="btn btn-pink-custom mt-3">查看留学项目 →</a>
+            </div>
+        </div>
+        <!-- 第2张轮播 -->
+        <div class="carousel-item"
+            style="background-image: url('{{ url_for('static', filename='images/hero2.svg') }}');">
+            <div class="carousel-caption">
+                <h2>🎓 100+ 合作院校资源</h2>
+                <p>覆盖东京、大阪、京都等热门留学城市</p>
+                <a href="{{ url_for('about') }}" class="btn btn-pink-custom mt-3">了解更多 →</a>
+            </div>
+        </div>
+        <!-- 第3张轮播 -->
+        <div class="carousel-item"
+            style="background-image: url('{{ url_for('static', filename='images/hero3.svg') }}');">
+            <div class="carousel-caption">
+                <h2>✨ 95% 升学成功率</h2>
+                <p>专业顾问团队一对一规划，助你实现留学梦想</p>
+                <a href="{{ url_for('contact') }}" class="btn btn-pink-custom mt-3">立即咨询 →</a>
+            </div>
+        </div>
+    </div>
+    <!-- 前后翻页按钮 -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+</div>
+
+<!-- ========== 数据统计条 ========== -->
+<section class="stats-bar">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 col-6">
+                <div class="stat-box">
+                    <div class="stat-number">3000+</div>
+                    <div class="stat-label">累计服务学生</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-box">
+                    <div class="stat-number">100+</div>
+                    <div class="stat-label">合作院校</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-box">
+                    <div class="stat-number">95%</div>
+                    <div class="stat-label">升学成功率</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-box">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">年行业经验</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== 核心优势板块 ========== -->
+<section class="section-padding" style="background: var(--bg-light);">
+    <div class="container">
+        <div class="section-title">
+            <h2>为什么选择樱路留学</h2>
+            <p>十年深耕日本留学，用专业和真诚成就每一位学子的留学梦想</p>
+        </div>
+        <div class="row g-4">
+            {% for adv in advantages %}
+            <div class="col-lg-3 col-md-6">
+                <div class="advantage-card fade-in-up delay-{{ loop.index }}">
+                    <div class="icon-wrapper">
+                        <i class="bi {{ adv.icon }}"></i>
+                    </div>
+                    <h5>{{ adv.title }}</h5>
+                    <p>{{ adv.desc }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ========== 热门项目推荐 ========== -->
+<section class="section-padding" style="background: var(--bg-white);">
+    <div class="container">
+        <div class="section-title">
+            <h2>热门留学项目</h2>
+            <p>精选优质留学项目，满足不同阶段的升学需求</p>
+        </div>
+        <div class="row g-4">
+            {% for prog in hot_programs %}
+            <div class="col-lg-4 col-md-6">
+                <div class="program-card fade-in-up delay-{{ loop.index }}">
+                    <div class="card-img-wrapper">
+                        <!-- 项目图片：替换 static/images/ 下对应文件即可 -->
+                        <img src="{{ url_for('static', filename='images/' + prog.image) }}" alt="{{ prog.title }}">
+                        <span class="card-badge">{{ prog.category }}</span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ prog.title }}</h5>
+                        <p class="card-text">{{ prog.desc }}</p>
+                        <div class="card-meta">
+                            <span class="location"><i class="bi bi-geo-alt-fill"></i>{{ prog.location }}</span>
+                            <span class="fee">{{ prog.fee }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- 查看更多按钮 -->
+        <div class="text-center mt-5">
+            <a href="{{ url_for('programs') }}" class="btn btn-primary-custom">
+                查看全部项目 <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ========== CTA 横幅 ========== -->
+<section style="background: linear-gradient(135deg, var(--primary-dark), var(--primary-blue)); padding: 60px 0;">
+    <div class="container text-center">
+        <h2 style="color: #fff; font-weight: 800; margin-bottom: 15px;">准备好开启日本留学之旅了吗？</h2>
+        <p style="color: rgba(255,255,255,0.75); font-size: 1.1rem; margin-bottom: 25px;">
+            联系我们的专业顾问，获取免费留学评估和个性化方案
+        </p>
+        <a href="{{ url_for('contact') }}" class="btn btn-pink-custom btn-lg">
+            免费咨询 <i class="bi bi-chat-dots ms-1"></i>
+        </a>
+    </div>
+</section>
+{% endblock %}

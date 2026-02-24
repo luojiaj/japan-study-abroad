@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% block title %}留学项目{% endblock %}
+
+{% block content %}
+<!-- ========== 页面顶部 Banner ========== -->
+<section class="page-banner">
+    <div class="container">
+        <h1>🎓 留学项目</h1>
+        <p>覆盖语言学校、本科、硕士，找到最适合你的留学方案</p>
+    </div>
+</section>
+
+<!-- ========== 分类导航 + 筛选 ========== -->
+<section class="section-padding">
+    <div class="container">
+        <!-- 分类标签 -->
+        <div class="text-center mb-4">
+            <ul class="nav category-tabs justify-content-center" id="categoryTabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" data-category="all">全部项目</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-category="语言学校">语言学校</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-category="本科">本科</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-category="硕士">硕士</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 筛选条 -->
+        <div class="filter-bar">
+            <div class="row align-items-center">
+                <div class="col-md-5">
+                    <label class="me-2"><i class="bi bi-geo-alt me-1"></i>地区筛选：</label>
+                    <select class="form-select d-inline-block w-auto" id="locationFilter">
+                        <option value="all">全部地区</option>
+                        <option value="东京">东京</option>
+                        <option value="大阪">大阪</option>
+                        <option value="京都">京都</option>
+                        <option value="全国">全国</option>
+                        <option value="其他地区">其他地区</option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label class="me-2"><i class="bi bi-currency-yen me-1"></i>学费范围：</label>
+                    <select class="form-select d-inline-block w-auto" id="feeFilter">
+                        <option value="all">全部学费</option>
+                        <option value="low">70万日元以下</option>
+                        <option value="mid">70-100万日元</option>
+                        <option value="high">100万日元以上</option>
+                    </select>
+                </div>
+                <div class="col-md-2 text-end">
+                    <button class="btn btn-primary-custom btn-sm" onclick="resetFilters()">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>重置
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 项目卡片列表 -->
+        <div class="row g-4" id="programList">
+            {% for prog in programs %}
+            <div class="col-lg-4 col-md-6 program-item" data-category="{{ prog.category }}"
+                data-location="{{ prog.location }}" data-fee="{{ prog.fee }}">
+                <div class="program-detail-card">
+                    <span class="card-category">{{ prog.category }}</span>
+                    <h5>{{ prog.title }}</h5>
+                    <p class="desc">{{ prog.desc }}</p>
+                    <ul class="info-list">
+                        <li><i class="bi bi-geo-alt-fill"></i>地区：{{ prog.location }}</li>
+                        <li><i class="bi bi-cash-stack"></i>学费：<span class="fee-highlight">{{ prog.fee }}</span></li>
+                        <li><i class="bi bi-clock"></i>学制：{{ prog.duration }}</li>
+                        <li><i class="bi bi-check-circle"></i>申请条件：{{ prog.conditions }}</li>
+                    </ul>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- 无结果提示（默认隐藏） -->
+        <div class="text-center py-5" id="noResults" style="display:none;">
+            <i class="bi bi-search" style="font-size:3rem; color:var(--text-light);"></i>
+            <p class="mt-3" style="color:var(--text-muted);">没有找到符合条件的项目，请尝试调整筛选条件</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // ========== 筛选逻辑（纯前端，无需后端） ==========
+
+    // 获取所有项目卡片
+    var items = document.querySelectorAll('.program-item');
+    var categoryTabs = document.querySelectorAll('#categoryTabs .nav-link');
+    var locationFilter = document.getElementById('locationFilter');
+    var feeFilter = document.getElementById('feeFilter');
+    var noResults = document.getElementById('noResults');
+
+    // 当前选中的分类
+    var currentCategory = 'all';
+
+    // 分类标签点击事件
+    categoryTabs.forEach(function (tab) {
+        tab.addEventListener('click', function (e) {
+            e.preventDefault();
+            // 更新激活状态
+            categoryTabs.forEach(function (t) { t.classList.remove('active'); });
+            this.classList.add('active');
+            // 记录当前分类
+            currentCategory = this.getAttribute('data-category');
+            // 执行筛选
+            filterPrograms();
+        });
+    });
+
+    // 下拉筛选变化事件
+    locationFilter.addEventListener('change', filterPrograms);
+    feeFilter.addEventListener('change', filterPrograms);
+
+    // 核心筛选函数
+    function filterPrograms() {
+        var location = locationFilter.value;
+        var fee = feeFilter.value;
+        var visibleCount = 0;
+
+        items.forEach(function (item) {
+            var show = true;
+            // 按分类筛选
+            if (currentCategory !== 'all' && item.getAttribute('data-category') !== currentCategory) {
+                show = false;
+            }
+            // 按地区筛选
+            if (location !== 'all' && item.getAttribute('data-location') !== location) {
+                show = false;
+            }
+            // 按学费范围筛选（简单的关键字匹配）
+            if (fee !== 'all') {
+                var feeText = item.getAttribute('data-fee');
+                // 提取费用中的数字（取第一个数字作为参考）
+                var match = feeText.match(/(\d+)/);
+                if (match) {
+                    var feeNum = parseInt(match[1]);
+                    if (fee === 'low' && feeNum >= 70) show = false;
+                    if (fee === 'mid' && (feeNum < 70 || feeNum > 100)) show = false;
+                    if (fee === 'high' && feeNum < 100) show = false;
+                }
+            }
+            // 显示/隐藏
+            item.style.display = show ? '' : 'none';
+            if (show) visibleCount++;
+        });
+
+        // 控制"无结果"提示
+        noResults.style.display = visibleCount === 0 ? '' : 'none';
+    }
+
+    // 重置筛选
+    function resetFilters() {
+        currentCategory = 'all';
+        locationFilter.value = 'all';
+        feeFilter.value = 'all';
+        categoryTabs.forEach(function (t) { t.classList.remove('active'); });
+        categoryTabs[0].classList.add('active');
+        filterPrograms();
+    }
+</script>
+{% endblock %}
