@@ -243,8 +243,8 @@ KB_DIR = Path(__file__).resolve().parent / "kb"
 KB_DOCS_DIR = KB_DIR / "docs"
 KB_FAQ_PATH = KB_DIR / "faq.json"
 
-# 统一追加的服务提示语
-SERVICE_SUFFIX = "\n\n如需更多服务，请咨询人工客服～"
+# 统一追加的服务提示语 - 新策略：所有回答都附加微信建议（不强制转人工）
+SERVICE_SUFFIX = "\n\n如需更专业的咨询，请添加客服微信：ljjsosmart"
 
 # 转人工时更精简的提示（会自动拼接微信号）
 HANDOFF_TEMPLATE = "具体详情可以咨询留学客服哦，客服微信：{wechat}"
@@ -298,6 +298,11 @@ FAQ_SYNONYMS: dict[str, list[str]] = {
 
 SESSION_LIMIT = 500
 SESSION_STORE: dict[str, dict] = {}
+HISTORY_MAX_TURNS = 8
+HISTORY_MAX_CHARS = 2000
+MAX_TURNS_PER_SESSION = 50 #单词会话最多交互轮数，超过后建议转人工
+TURN_LIMIT_MESSAGE = "如需咨询更多信息，请添加客服微信:ljjsosmart。"
+ENABLE_LLM = False
 INFO_QUERY_MARKERS = [
     "是什么", "什么意思", "含义", "流程", "费用", "条件", "要求", "材料",
     "准备", "怎么", "如何", "多久", "时间", "对比", "区别",
@@ -326,13 +331,18 @@ def _load_faq():
 
 
 def _append_suffix_once(answer: str, *, handoff: bool = False) -> str:
+    """确保所有答案都附加服务提示语。"""
     answer = (answer or "").strip()
     if not answer:
         return SERVICE_SUFFIX.strip()
-    if not handoff:
+
+    # 避免重复追加提示
+    wechat = (CONTACT_INFO.get("wechat") or "").strip()
+    if SERVICE_SUFFIX.strip() in answer or "如需更专业的咨询" in answer:
         return answer
-    if "如需更多服务，请咨询人工客服" in answer:
+    if wechat and wechat in answer:
         return answer
+
     return answer + SERVICE_SUFFIX
 
 
@@ -343,14 +353,55 @@ def _handoff_message() -> str:
 
 def _get_session_state(session_id: str | None) -> dict:
     if not session_id:
-        return {"intent": None, "slots": {}}
+        return {"intent": None, "slots": {}, "history": [], "turns": 0}
     state = SESSION_STORE.get(session_id)
     if state is None:
         if len(SESSION_STORE) >= SESSION_LIMIT:
             SESSION_STORE.pop(next(iter(SESSION_STORE)))
-        state = {"intent": None, "slots": {}}
+        state = {"intent": None, "slots": {}, "history": [], "turns": 0}
         SESSION_STORE[session_id] = state
+    else:
+        state.setdefault("history", [])
+        state.setdefault("turns", 0)
     return state
+
+
+def _increment_turns(state: dict) -> int:
+    state["turns"] = int(state.get("turns") or 0) + 1
+    return state["turns"]
+
+
+def _append_history(state: dict, role: str, content: str) -> None:
+    history = state.setdefault("history", [])
+    text = (content or "").strip()
+    if not text:
+        return
+    history.append({"role": role, "content": text})
+    if len(history) > HISTORY_MAX_TURNS:
+        del history[:len(history) - HISTORY_MAX_TURNS]
+
+
+def _history_context(state: dict) -> str:
+    history = state.get("history") or []
+    parts = []
+    total = 0
+    for item in history:
+        role = item.get("role") or ""
+        content = (item.get("content") or "").strip()
+        if not content:
+            continue
+        prefix = "用户" if role == "user" else "助手"
+        line = f"{prefix}：{content}"
+        total += len(line)
+        parts.append(line)
+        if total >= HISTORY_MAX_CHARS:
+            break
+    return "\n".join(parts).strip()
+
+
+def _record_turn(state: dict, question: str, answer: str) -> None:
+    _append_history(state, "user", question)
+    _append_history(state, "assistant", answer)
 
 
 def _detect_intent(text: str) -> str | None:
@@ -667,11 +718,13 @@ def _doubao_chat(prompt: str) -> tuple[str | None, str | None]:
         return None, f"exception: {type(e).__name__}"
 
 
-def _normalize_uncertain(answer: str) -> str:
+def _normalize_uncertain(answer: str, *, allow_handoff: bool = True) -> str:
     """把模型输出的‘不确定/需要人工’类话术收敛成站点统一的精简版本。"""
     a = (answer or "").strip()
     if not a:
         return ""
+    if not allow_handoff:
+        return a
     uncertain_markers = [
         "不确定",
         "无法确定",
@@ -688,10 +741,11 @@ def _normalize_uncertain(answer: str) -> str:
 
 @app.post("/api/chat")
 def api_chat():
-    """本地免费聊天接口：
-    - 优先匹配 FAQ
-    - 次选：从 docs 文档中摘录相关段落
-    - 否则：建议转人工
+    """新策略聊天接口：
+    1. FAQ 高置信命中 -> 直接用FAQ答
+    2. 知识库有部分命中 + LLM启用 -> LLM基于知识库上下文生成答案
+    3. 知识库无命中 + LLM启用 -> LLM自由回答用户问题
+    4. 知识库无命中 + LLM未启用 -> 建议转人工
     """
     from flask import request, jsonify
 
@@ -702,103 +756,123 @@ def api_chat():
     _update_state(question, state)
 
     faq = _load_faq()
-    fallback = faq.get("fallback") or "这个问题可能比较复杂，建议转人工客服。"
-
-    # 统一使用更精简的转人工提示
-    fallback = _handoff_message()
-
     debug = bool((request.args.get('debug') or '').strip())
 
     if not question:
         return jsonify({"answer": "请先输入你的问题。", "handoff": False})
 
+    turns = _increment_turns(state)
+    if turns > MAX_TURNS_PER_SESSION:
+        return jsonify({"answer": TURN_LIMIT_MESSAGE, "handoff": True, "source": "limit"})
+
     if _is_greeting_or_generic(question, state):
-        return jsonify({"answer": GUIDE_PROMPT, "handoff": False, "source": "guide"})
+        answer = GUIDE_PROMPT
+        _record_turn(state, question, answer)
+        return jsonify({"answer": answer, "handoff": False, "source": "guide"})
 
     follow_up = _needs_more_info(question, state)
     if follow_up:
-        return jsonify({"answer": follow_up, "handoff": False, "source": "followup"})
+        answer = follow_up
+        _record_turn(state, question, answer)
+        return jsonify({"answer": answer, "handoff": False, "source": "followup"})
 
     score, item = _best_faq_answer(question, faq.get("items", []))
 
     # 1) FAQ 高置信命中：直接答
     if item and score >= 0.78:
-        return jsonify({"answer": item.get("a", ""), "handoff": False, "source": "faq"})
+        answer = item.get("a", "")
+        answer = _append_suffix_once(answer, handoff=False)
+        _record_turn(state, question, answer)
+        return jsonify({"answer": answer, "handoff": False, "source": "faq"})
 
     docs_text = _load_docs_text()
+    history_ctx = _history_context(state)
+    # 2) 查文档和FAQ做上下文
+    top_faq = _top_faq_context(question, faq.get("items", []), k=5)
 
-    # 2) 若启用豆包：用“Top FAQ 候选 + 文档最相关段落”作为知识库上下文，让 LLM 生成自然回答
-    if _doubao_enabled():
-        # Top FAQ 作为上下文（覆盖同义问法）
-        top_faq = _top_faq_context(question, faq.get("items", []), k=5)
-        faq_ctx_parts = []
-        for s, it in top_faq:
-            # 放宽阈值：同义/泛问法也能召回到相关FAQ
-            if s < 0.35:
-                continue
+    # 评估知识库命中度
+    faq_ctx_parts = []
+    for s, it in top_faq:
+        if s >= 0.35:  # 放宽阈值
             faq_ctx_parts.append(f"Q: {it.get('q','')}\nA: {it.get('a','')}")
-        faq_ctx = "\n\n".join(faq_ctx_parts)
 
-        best_para, best_score, _ = _doc_best_paragraph(question, docs_text)
-        doc_ctx = best_para if (best_para and best_score >= 0.16) else ""
+    best_para, best_score, _ = _doc_best_paragraph(question, docs_text)
+    doc_ctx = best_para if (best_para and best_score >= 0.16) else ""
 
-        kb_ctx = "\n\n".join([c for c in [faq_ctx, doc_ctx] if c.strip()])
+    kb_ctx = "\n\n".join([c for c in ["\n\n".join(faq_ctx_parts), doc_ctx] if c.strip()])
+    has_kb_content = bool(kb_ctx.strip())
 
-        # 兜底：如果召回不到上下文，就给一个 FAQ 摘要，让模型至少知道你们能回答什么
-        if not kb_ctx.strip():
-            all_items = faq.get("items", [])
-            preview = []
-            for it in all_items[:12]:
-                q = (it.get("q") or "").strip()
-                a = (it.get("a") or "").strip()
-                if q and a:
-                    preview.append(f"Q: {q}\nA: {a}")
-            if preview:
-                kb_ctx = "\n\n".join(preview)
-
-        if kb_ctx.strip():
+    # 3) 如果启用 LLM，让模型来决定如何回答
+    if ENABLE_LLM and _doubao_enabled():
+        if has_kb_content:
+            # 知识库有内容：基于知识库回答
             prompt = (
-                "【知识库】\n"
+                "【历史对话】\n"
+                f"{history_ctx}\n\n"
+                "【知识库参考】\n"
                 f"{kb_ctx}\n\n"
                 "【用户问题】\n"
                 f"{question}\n\n"
                 "要求：\n"
-                "1) 必须严格基于知识库回答，禁止补充知识库之外的信息。\n"
-                "2) 若知识库信息不足以回答，请直接输出：不确定，需要人工客服确认。\n"
-                "3) 输出尽量精简、条理清晰。\n"
+                "1) 优先基于知识库内容回答。\n"
+                "2) 如果知识库有相关内容，按知识库信息如实回答。\n"
+                "3) 如果知识库信息不足，可补充专业知识但需指出是个人建议。\n"
+                "4) 保持简洁、条理清晰。\n"
             )
-            llm_answer, llm_err = _doubao_chat(prompt)
-            if llm_answer:
-                normalized = _normalize_uncertain(llm_answer)
-                need_handoff = normalized == _handoff_message()
-                resp = {
-                    "answer": _append_suffix_once(normalized, handoff=need_handoff),
-                    "handoff": need_handoff,
-                    "source": "doubao",
-                    "llm_enabled": True,
-                    "kb_ctx_len": len(kb_ctx),
-                }
-                if debug:
-                    resp["llm_error"] = llm_err
-                return jsonify(resp)
-            # LLM 调用失败也给出原因（debug 模式）
+        else:
+            # 知识库无内容：让AI自由回答
+            prompt = (
+                "【历史对话】\n"
+                f"{history_ctx}\n\n"
+                "【用户问题】\n"
+                f"{question}\n\n"
+                "你是日本留学咨询的专业顾问。请根据你的知识专业回答用户问题。\n"
+                "如果关键信息不足，先给出通用建议，并提出1-2个澄清问题。\n"
+                "回答要简洁、实用、条理清晰，不要建议转人工。"
+            )
+
+        llm_answer, llm_err = _doubao_chat(prompt)
+        if llm_answer:
+            # LLM的回答如果表示不确定，改为转人工提示
+            normalized = _normalize_uncertain(llm_answer, allow_handoff=has_kb_content)
+            answer = _append_suffix_once(normalized, handoff=False)
+            _record_turn(state, question, answer)
+            resp = {
+                "answer": answer,
+                "handoff": normalized == _handoff_message(),
+                "source": "llm_kb" if has_kb_content else "llm_free",
+                "llm_enabled": True,
+            }
             if debug:
-                return jsonify({
-                    "answer": _append_suffix_once(fallback, handoff=True),
-                    "handoff": True,
-                    "source": "fallback",
-                    "llm_enabled": True,
-                    "llm_error": llm_err,
-                })
+                resp["kb_available"] = has_kb_content
+                resp["kb_ctx_len"] = len(kb_ctx)
+            return jsonify(resp)
 
-    # 3) 不启用 LLM 或 LLM 没拿到结果：回退到文档摘录
-    doc_ans = _doc_based_answer(question, docs_text)
-    if doc_ans:
-        return jsonify({"answer": doc_ans, "handoff": False, "source": "docs"})
+        # LLM调用失败：转人工或使用文档摘录
+        if debug:
+            answer = _append_suffix_once(_handoff_message(), handoff=True)
+            _record_turn(state, question, answer)
+            return jsonify({
+                "answer": answer,
+                "handoff": True,
+                "source": "error",
+                "llm_enabled": True,
+                "llm_error": llm_err,
+            })
 
+    # 4) 不启用LLM：尝试文档摘录，否则转人工
+    if has_kb_content:
+        doc_ans = _doc_based_answer(question, docs_text)
+        if doc_ans:
+            answer = _append_suffix_once(doc_ans, handoff=False)
+            _record_turn(state, question, answer)
+            return jsonify({"answer": answer, "handoff": False, "source": "docs"})
 
-    # 4) 最终回退：转人工
-    return jsonify({"answer": _append_suffix_once(fallback, handoff=True), "handoff": True, "source": "fallback"})
+    # 5) 最终转人工
+    answer = _append_suffix_once(_handoff_message(), handoff=True)
+    _record_turn(state, question, answer)
+    return jsonify({"answer": answer, "handoff": True, "source": "fallback"})
+
 
 
 def _split_markdown_chunks(text: str, source: str) -> list[dict]:
