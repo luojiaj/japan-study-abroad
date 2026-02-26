@@ -10,7 +10,7 @@
     </div>
 </section>
 
-<!-- ========== 联系信息 + 地图 ========== -->
+<!-- ========== 联系信息 + 留言 ========== -->
 <section class="section-padding">
     <div class="container">
         <div class="row g-4">
@@ -67,39 +67,67 @@
                 </div>
             </div>
 
-            <!-- 右侧：地图占位 + 留言框 -->
+            <!-- 右侧：常见问题 + 留言框 -->
             <div class="col-lg-7">
-                <!-- 地图占位区域 -->
-                <div class="map-placeholder mb-4">
-                    <i class="bi bi-map"></i>
-                    <span>地图加载区域</span>
-                    <small style="color:var(--text-light); margin-top:8px;">
-                        此处可嵌入百度地图/高德地图 iframe
-                    </small>
+                <!-- 常见问题速览 -->
+                <div class="quick-faq mb-4">
+                    <h4 style="font-weight:700; margin-bottom:20px; color:var(--primary-dark);">
+                        <i class="bi bi-question-circle me-2" style="color:var(--accent-pink);"></i>常见问题速览
+                    </h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="quick-faq-card">
+                                <div class="faq-icon">💬</div>
+                                <h6>如何预约咨询？</h6>
+                                <p>可通过微信、电话或在线留言预约，我们会在24小时内回复。</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="quick-faq-card">
+                                <div class="faq-icon">💰</div>
+                                <h6>服务费用如何？</h6>
+                                <p>根据项目类型和个人情况定制报价，详情请咨询顾问。</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="quick-faq-card">
+                                <div class="faq-icon">📅</div>
+                                <h6>什么时候开始准备？</h6>
+                                <p>建议提前1-1.5年开始规划，越早准备选择越多。</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="quick-faq-card">
+                                <div class="faq-icon">🎓</div>
+                                <h6>没有日语基础能申请吗？</h6>
+                                <p>可以！SGU英语项目无需日语，用英语成绩即可申请名校。</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- 留言框（仅展示，不具备提交功能） -->
+                <!-- 在线留言 -->
                 <div class="message-form">
                     <h4 style="font-weight:700; margin-bottom:24px; color:var(--primary-dark);">
                         <i class="bi bi-chat-left-text me-2" style="color:var(--accent-pink);"></i>在线留言
                     </h4>
-                    <form onsubmit="return false;">
+                    <form id="contactForm" onsubmit="return submitMessage(event)">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">您的姓名</label>
-                                <input type="text" class="form-control" placeholder="请输入姓名">
+                                <label class="form-label">您的姓名 <span style="color:var(--accent-pink);">*</span></label>
+                                <input type="text" id="msgName" class="form-control" placeholder="请输入姓名" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">联系电话</label>
-                                <input type="tel" class="form-control" placeholder="请输入手机号">
+                                <label class="form-label">联系电话 <span style="color:var(--accent-pink);">*</span></label>
+                                <input type="tel" id="msgPhone" class="form-control" placeholder="请输入11位手机号" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">电子邮箱</label>
-                                <input type="email" class="form-control" placeholder="请输入邮箱">
+                                <input type="email" id="msgEmail" class="form-control" placeholder="请输入邮箱">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">感兴趣的项目</label>
-                                <select class="form-control">
+                                <select id="msgProgram" class="form-control">
                                     <option>本科入学（EJU/直申/校内考）</option>
                                     <option>硕士升学（研究生/修士直考）</option>
                                     <option>SGU 英语项目</option>
@@ -110,19 +138,21 @@
                                 </select>
                             </div>
                             <div class="col-12">
-                                <label class="form-label">留言内容</label>
-                                <textarea class="form-control" rows="4" placeholder="请简要描述您的留学需求..."></textarea>
+                                <label class="form-label">留言内容 <span style="color:var(--accent-pink);">*</span></label>
+                                <textarea id="msgContent" class="form-control" rows="4" placeholder="请简要描述您的留学需求..."
+                                    required></textarea>
                             </div>
                             <div class="col-12">
-                                <button type="button" class="btn btn-primary-custom w-100"
-                                    onclick="alert('留言功能暂未开放，请通过电话或微信联系我们！')">
+                                <button type="submit" id="submitBtn" class="btn btn-primary-custom w-100">
                                     <i class="bi bi-send me-1"></i> 提交留言
                                 </button>
                             </div>
                         </div>
+                        <!-- 提交结果提示 -->
+                        <div id="formAlert" class="mt-3" style="display:none;"></div>
                         <p class="form-hint">
-                            <i class="bi bi-info-circle me-1"></i>
-                            留言功能暂未开放，如需咨询请直接拨打电话或添加微信
+                            <i class="bi bi-shield-check me-1"></i>
+                            您的信息将被安全保存，我们会尽快与您联系
                         </p>
                     </form>
                 </div>
@@ -130,4 +160,68 @@
         </div>
     </div>
 </section>
+
+<script>
+    async function submitMessage(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const alert = document.getElementById('formAlert');
+
+        // 收集表单数据
+        const data = {
+            name: document.getElementById('msgName').value.trim(),
+            phone: document.getElementById('msgPhone').value.trim(),
+            email: document.getElementById('msgEmail').value.trim(),
+            program: document.getElementById('msgProgram').value,
+            message: document.getElementById('msgContent').value.trim(),
+        };
+
+        if (!data.name || !data.phone || !data.message) {
+            alert.style.display = 'block';
+            alert.className = 'mt-3 alert alert-warning';
+            alert.innerHTML = '<i class="bi bi-exclamation-triangle me-1"></i> 请填写姓名、联系电话和留言内容';
+            return false;
+        }
+
+        // 手机号校验：必须是中国手机号（1[3-9]开头，共11位）
+        if (!/^1[3-9]\d{9}$/.test(data.phone)) {
+            alert.style.display = 'block';
+            alert.className = 'mt-3 alert alert-warning';
+            alert.innerHTML = '<i class="bi bi-exclamation-triangle me-1"></i> 手机号格式有误，请输入11位中国手机号';
+            return false;
+        }
+
+        // 禁用按钮，显示加载状态
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> 提交中...';
+
+        try {
+            const resp = await fetch('/api/contact-message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+            const result = await resp.json();
+
+            if (resp.ok && result.ok) {
+                alert.style.display = 'block';
+                alert.className = 'mt-3 alert alert-success';
+                alert.innerHTML = '<i class="bi bi-check-circle me-1"></i> ' + result.message;
+                document.getElementById('contactForm').reset();
+            } else {
+                alert.style.display = 'block';
+                alert.className = 'mt-3 alert alert-danger';
+                alert.innerHTML = '<i class="bi bi-x-circle me-1"></i> ' + (result.error || '提交失败，请稍后重试');
+            }
+        } catch (err) {
+            alert.style.display = 'block';
+            alert.className = 'mt-3 alert alert-danger';
+            alert.innerHTML = '<i class="bi bi-x-circle me-1"></i> 网络异常，请检查网络后重试';
+        }
+
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-send me-1"></i> 提交留言';
+        return false;
+    }
+</script>
 {% endblock %}

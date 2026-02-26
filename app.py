@@ -144,40 +144,25 @@ ALL_PROGRAMS = [
 
 # 发展历程数据（关于我们页）
 MILESTONES = [
-    {"year": "2015", "event": "机构成立，专注日本本科与研究生升学规划与申请辅导"},
-    {"year": "2017", "event": "业务拓展至本科及硕士申请，累计服务学生突破500人"},
-    {"year": "2019", "event": "与日本50+院校建立官方合作关系"},
-    {"year": "2021", "event": "开设线上日语培训课程，服务范围覆盖全国"},
-    {"year": "2023", "event": "合作院校突破100所，累计服务学生超过3000人"},
-    {"year": "2025", "event": "全新官网上线，持续深耕日本留学服务"},
+    {"year": "2020", "event": "团队成立，专注日本研究生升学规划与申请辅导"},
+    {"year": "2022", "event": "业务拓展至本科及硕士申请, 留学成功人数超10人"},
+    {"year": "2024", "event": "开设线上日语培训课程，服务范围覆盖全国"},
 ]
 
 # 团队成员数据
 TEAM_MEMBERS = [
     {
-        "name": "田中老师",
-        "role": "创始人 / 首席留学顾问",
-        "desc": "留日10年，东京大学硕士毕业，深耕日本留学行业15年。",
-        "avatar": "team1.svg"
+        "name": "罗老师",
+        "role": "资深留学规划老师",
+        "desc": "留日超7年，名古屋大学硕士毕业，深耕日本留学行业10年。",
+        "avatar": "Teacher_luo.jpg"
     },
     {
-        "name": "王老师",
-        "role": "升学指导主管",
-        "desc": "早稻田大学教育学硕士，擅长名校申请及研究计划书指导。",
-        "avatar": "team2.svg"
-    },
-    {
-        "name": "佐藤老师",
-        "role": "日语教学总监",
-        "desc": "日本籍资深教师，持有日语教育能力检定证书，教学经验丰富。",
-        "avatar": "team3.svg"
-    },
-    {
-        "name": "李老师",
-        "role": "签证及生活顾问",
-        "desc": "熟悉日本签证政策及生活指南，为学生提供赴日前后全方位支持。",
-        "avatar": "team4.svg"
-    },
+        "name": "汪老师",
+        "role": "资深文书撰写老师",
+        "desc": "东京大学计算机专业硕士，擅长名校申请及研究计划书指导。",
+        "avatar": "Teacher_wang.png"
+    }
 ]
 
 # 合作院校数据
@@ -189,11 +174,11 @@ PARTNER_SCHOOLS = [
 
 # 联系方式数据
 CONTACT_INFO = {
-    "address": "上海市静安区南京西路1234号XX大厦15楼",
+    "address": "上海市静安区南京西路688号15楼",
     "phone": "13367336095",
     "email": "luojiaj88@outlook.com",
     "wechat": "ljjsosmart",
-    "hours": "周一至周五 9:00-18:00，周六 10:00-18:00",
+    "hours": "周一至周五 9:00-20:00，周六 10:00-24:00",
 }
 
 
@@ -236,6 +221,56 @@ def contact():
         "contact.html",
         info=CONTACT_INFO,
     )
+
+
+# ========== 在线留言存储 ==========
+MESSAGES_FILE = Path(__file__).resolve().parent / "data" / "messages.json"
+
+
+@app.post("/api/contact-message")
+def api_contact_message():
+    """接收在线留言，追加保存到 data/messages.json"""
+    from flask import request, jsonify
+    from datetime import datetime
+
+    payload = request.get_json(silent=True) or {}
+    name = (payload.get("name") or "").strip()
+    phone = (payload.get("phone") or "").strip()
+    email = (payload.get("email") or "").strip()
+    program = (payload.get("program") or "").strip()
+    message = (payload.get("message") or "").strip()
+
+    # 基本校验
+    if not name or not phone or not message:
+        return jsonify({"ok": False, "error": "姓名、联系电话和留言内容不能为空"}), 400
+
+    # 手机号校验：必须是中国手机号（1[3-9]开头，共11位）
+    if not re.match(r"^1[3-9]\d{9}$", phone):
+        return jsonify({"ok": False, "error": "手机号格式有误，请输入11位中国手机号"}), 400
+
+    record = {
+        "name": name,
+        "phone": phone,
+        "email": email,
+        "program": program,
+        "message": message,
+        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    }
+
+    # 读取 → 追加 → 写回
+    MESSAGES_FILE.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        if MESSAGES_FILE.exists():
+            data = json.loads(MESSAGES_FILE.read_text(encoding="utf-8") or "[]")
+        else:
+            data = []
+    except (json.JSONDecodeError, OSError):
+        data = []
+
+    data.append(record)
+    MESSAGES_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    return jsonify({"ok": True, "message": "留言已提交，我们会尽快联系您！"})
 
 
 # ========== 本地知识库聊天（免费） ==========
