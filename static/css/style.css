@@ -701,25 +701,66 @@ h1, h2, h3, h4, h5, h6 {
     margin-bottom: 0;
 }
 
-/* 地图占位 */
-.map-placeholder {
-    background: linear-gradient(135deg, #e8ecf1, #d5dce6);
+/* 常见问题速览卡片 */
+.quick-faq {
+    background: var(--bg-white);
     border-radius: var(--radius);
-    height: 300px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-muted);
-    font-size: 1.1rem;
-    border: 2px dashed rgba(26,42,74,0.15);
+    padding: 28px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(26,42,74,0.06);
 }
 
-.map-placeholder i {
-    font-size: 3rem;
-    color: var(--primary-blue);
-    margin-bottom: 12px;
-    opacity: 0.6;
+.quick-faq-card {
+    background: var(--bg-light);
+    border-radius: 12px;
+    padding: 20px;
+    height: 100%;
+    border: 1px solid rgba(26,42,74,0.06);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.quick-faq-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--accent-pink), var(--accent-gold));
+    border-radius: 4px 0 0 4px;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.quick-faq-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(247,168,184,0.3);
+}
+
+.quick-faq-card:hover::before {
+    opacity: 1;
+}
+
+.quick-faq-card .faq-icon {
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+}
+
+.quick-faq-card h6 {
+    font-weight: 700;
+    color: var(--primary-dark);
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+}
+
+.quick-faq-card p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 0;
+    line-height: 1.6;
 }
 
 /* 留言框 */
