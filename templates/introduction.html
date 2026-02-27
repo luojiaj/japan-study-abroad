@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}留学全景解析{% endblock %}
+
+{% block content %}
+
+<!-- 样式定义 -->
+<style>
+    .uni-type-national { border-left-color: #3498db; }
+    .uni-type-private { border-left-color: #9b59b6; }
+    .intro-text-block h3 { font-size: 1.5rem; font-weight: 700; color: var(--primary-dark); margin: 0; }
+    .intro-text-block p { font-size: 1.05rem; line-height: 1.9; color: #555; text-align: justify; margin-bottom: 20px; }
+</style>
+
+<!-- ========== 页面头部 Hero ========== -->
+<section class="page-hero" style="background: linear-gradient(135deg, var(--primary-dark), var(--primary-blue)); padding: 80px 0; color: #fff; text-align: center;">
+    <div class="container">
+        <h1 class="display-4 fw-bold text-white">日本留学全景解析</h1>
+        <p class="lead opacity-75">深入了解升学路径与顶尖名校详情，为你的留学之路精准导航</p>
+    </div>
+</section>
+
+<!-- ========== 第一部分：留学项目简介（段落式排版） ========== -->
+<section class="section-padding" style="background: #ffffff;">
+    <div class="container">
+        <div class="section-title">
+            <h2>核心升学项目简介</h2>
+            <p>三大主流升学路径解析，明确方向，精准规划</p>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                {% for intro in introductions %}
+                <div class="intro-text-block" style="margin-bottom: 50px; padding-bottom: 40px; border-bottom: 1px dashed #eee;">
+                    <div class="d-flex align-items-center mb-3">
+                        <h3>{{ intro.title }}</h3>
+                        <span class="badge ms-3" style="background-color: var(--primary-blue); opacity: 0.8; font-weight: normal;">{{ intro.category }}</span>
+                    </div>
+                    <p>{{ intro.desc }}</p>
+                    <div style="border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                         <img src="{{ url_for('static', filename='images/' + intro.image) }}" alt="{{ intro.title }}" style="width: 100%; display: block;">
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== 第二部分：日本顶尖大学数据展示（列表式排版） ========== -->
+<section class="section-padding" style="background: #f9fafb;">
+    <div class="container">
+        <div class="section-title">
+            <h2>日本顶尖名校详情</h2>
+            <p>旧帝国大学、早庆、东工大 —— 申请数据全收录</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-11">
+                {% for uni in universities %}
+                
+                <div class="uni-list-item {% if uni.type == '国立' %}uni-type-national{% else %}uni-type-private{% endif %}" style="background: #fff; margin-bottom: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border-left: 5px solid; overflow: hidden;">
+                    <div class="p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h3 style="font-size: 1.4rem; font-weight: 700; color: #2c3e50; margin-bottom: 5px;">
+                                    {{ uni.name }}
+                                    <small style="font-size: 0.8rem; color: #999; font-weight: 400; margin-left: 8px;">{{ uni.name_jp }}</small>
+                                </h3>
+                                <div style="font-size: 0.9rem; color: #666;">
+                                    <span class="me-3"><i class="bi bi-geo-alt"></i> {{ uni.location }}</span>
+                                    <span class="badge rounded-pill" style="background: #f0f2f5; color: #666;">{{ uni.type }}</span>
+                                </div>
+                            </div>
+                            <div class="text-end" style="min-width: 140px;">
+                                <span style="color: #f39c12; font-size: 1.1rem;">{{ uni.difficulty.stars }}</span>
+                                <div style="font-size: 0.8rem; color: #888;">{{ uni.difficulty.description }}</div>
+                            </div>
+                        </div>
+
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <h6 style="font-size: 0.9rem; color: #888; margin-bottom: 8px;">学制与学费</h6>
+                                <p style="margin: 0; color: #444; line-height: 1.8;">
+                                    <strong>学制：</strong>本科{{ uni.system.undergraduate }} / 修士{{ uni.system.master }}<br>
+                                    <strong>费用：</strong>入学金 ¥{{ "{:,}".format(uni.tuition.entrance_fee) }}，
+                                    {% if uni.tuition.annual_fee %}
+                                    年学费 ¥{{ "{:,}".format(uni.tuition.annual_fee) }}
+                                    {% elif uni.tuition.annual_fee_range %}
+                                    年学费 ¥{{ "{:,}".format(uni.tuition.annual_fee_range.min) }} ~ ¥{{ "{:,}".format(uni.tuition.annual_fee_range.max) }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 style="font-size: 0.9rem; color: #888; margin-bottom: 8px;">申请途径</h6>
+                                <p style="margin: 0; color: #444; line-height: 1.8;">
+                                    <strong>本科：</strong>{{ uni.application.undergraduate.methods | join('、') }}<br>
+                                    <strong>研究生：</strong>{{ uni.application.graduate.methods | join('、') }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mt-3 pt-3" style="border-top: 1px solid #f5f5f5;">
+                            {% for tag in uni.tags %}
+                            <span style="display: inline-block; background: #f8f9fa; color: #666; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; margin-right: 8px;">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== CTA 横幅 ========== -->
+<section style="background: linear-gradient(135deg, var(--primary-dark), var(--primary-blue)); padding: 60px 0;">
+    <div class="container text-center">
+        <h2 style="color: #fff; font-weight: 800; margin-bottom: 15px;">目标锁定，即刻启程</h2>
+        <p style="color: rgba(255,255,255,0.75); font-size: 1.1rem; margin-bottom: 25px;">
+            无论你的目标是帝国大学还是顶尖私立，樱路留学为你量身定制升学方案
+        </p>
+        <a href="{{ url_for('contact') }}" class="btn btn-pink-custom btn-lg">
+            免费评估背景  <i class="bi bi-arrow-right-circle ms-1"></i>
+        </a>
+    </div>
+</section>
+
+{% endblock %}

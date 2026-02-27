@@ -37,6 +37,10 @@
                            href="{{ url_for('index') }}">首页</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}"
+                           href="{{ url_for('introduction') }}">留学简介</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'programs' %}active{% endif %}"
                            href="{{ url_for('programs') }}">留学项目</a>
                     </li>
@@ -70,6 +74,7 @@
                     <h5>快速链接</h5>
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="{{ url_for('index') }}">首页</a></li>
+                        <li class="mb-2"><a href="{{ url_for('introduction') }}">留学简介</a></li>
                         <li class="mb-2"><a href="{{ url_for('programs') }}">留学项目</a></li>
                         <li class="mb-2"><a href="{{ url_for('about') }}">关于我们</a></li>
                         <li class="mb-2"><a href="{{ url_for('contact') }}">联系方式</a></li>

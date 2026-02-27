@@ -57,7 +57,7 @@ HOT_PROGRAMS = [
     {
         "title": "日本研究生入学方案（修士直考/研究生）",
         "category": "硕士",
-        "location": "全国",
+        "location": "全日本",
         "fee": "定制报价",
         "desc": "聚焦研究生升学：研究计划书+套磁+笔面试辅导，匹配目标院校与教授方向。",
         "image": "hot1.svg"
@@ -65,7 +65,7 @@ HOT_PROGRAMS = [
     {
         "title": "日本本科入学方案（EJU/直申/校内考）",
         "category": "本科",
-        "location": "全国",
+        "location": "全日本",
         "fee": "定制报价",
         "desc": "根据目标与基础制定备考与申请路线，覆盖材料准备、院校申请与面试辅导。",
         "image": "hot2.svg"
@@ -73,72 +73,281 @@ HOT_PROGRAMS = [
     {
         "title": "SGU 英语项目申请方案（本科/硕士）",
         "category": "SGU",
-        "location": "全国",
+        "location": "全日本",
         "fee": "定制报价",
         "desc": "面向全英文授课项目：选校策略、材料打磨、推荐信与面试全套支持。",
         "image": "hot3.svg"
     },
 ]
 
+# 简介页
+# 简介页（保留原有的服务介绍）
+# 简介页数据（项目官方简介）
+INTRODUCTIONS = [
+    {
+        "title": "日本研究生入学（修士直考/研究生）简介",
+        "category": "硕士",
+        "desc": "日本研究生教育分为硕士课程与研究生（预科）阶段。申请侧重学术背景与研究潜力，核心环节包括研究计划书撰写、教授套磁及严格的入学考试，旨在选拔具备专业素养的研究型人才。",
+        "image": "hot1.svg"
+    },
+    {
+        "title": "日本本科入学（EJU/直申/校内考）简介",
+        "category": "本科",
+        "desc": "日本本科入学主要采用EJU（日本留学生考试）结合校内考（笔试/面试）的选拔模式。国公立大学通常要求较高的EJU成绩，私立大学选拔方式灵活多样，全面考察学生的学术基础与语言能力。",
+        "image": "hot2.svg"
+    },
+    {
+        "title": "SGU 英语项目申请（本科/硕士）简介",
+        "category": "本科/硕士",
+        "desc": "SGU（Super Global University）项目提供全英文授课学位课程，覆盖本科与硕士阶段。申请者无需日语基础，凭英语成绩及标化成绩直接申请，旨在吸引全球优秀人才，入学门槛较高。",
+        "image": "hot3.svg"
+    },
+]
+
+
+# ========== 新增：日本顶尖大学数据 ==========
+# 包含旧帝国大学、早庆、东工大的详细申请信息
+TOP_UNIVERSITIES = [
+    {
+        "name": "东京大学",
+        "name_jp": "東京大学",
+        "type": "国立",
+        "category": "旧帝国大学",
+        "system": {"undergraduate": "4年", "master": "2年", "doctoral": "3年", "note": "医学部6年+4年"},
+        "tuition": {"entrance_fee": 282000, "annual_fee": 535800, "currency": "JPY", "note": "国立大学统一标准"},
+        "application": {
+            "undergraduate": {"methods": ["EJU留考(高分)", "校内考(小论文+面试)", "SGU英语项目"], "eju_score_required": "700分以上"},
+            "graduate": {"methods": ["联系教授获得内诺", "正式出愿", "入试"], "note": "需提前联系教授"}
+        },
+        "difficulty": {"level": 5, "stars": "★★★★★", "description": "日本最高峰，EJU需700分以上，校内考难度极大"},
+        "tags": ["日本第一", "综合实力最强", "QS世界Top30"],
+        "location": "东京都"
+    },
+    {
+        "name": "京都大学",
+        "name_jp": "京都大学",
+        "type": "国立",
+        "category": "旧帝国大学",
+        "system": {"undergraduate": "4年", "master": "2年", "doctoral": "3年", "note": None},
+        "tuition": {"entrance_fee": 282000, "annual_fee": 535800, "currency": "JPY", "note": "国立大学统一标准"},
+        "application": {
+            "undergraduate": {"methods": ["EJU留考", "校内考(重视数学/理科基础)", "英语项目"], "eju_score_required": "680分以上"},
+            "graduate": {"methods": ["AAO审查制度", "联系教授", "出愿"], "note": "需先进行AAO资格审查"}
+        },
+        "difficulty": {"level": 5, "stars": "★★★★★", "description": "关西第一学府，极度看重学术逻辑与基础能力"},
+        "tags": ["诺贝尔奖得主最多", "学术氛围浓厚", "关西第一"],
+        "location": "京都府"
+    },
+    {
+        "name": "大阪大学",
+        "name_jp": "大阪大学",
+        "type": "国立",
+        "category": "旧帝国大学",
+        "system": {"undergraduate": "4年", "master": "2年", "doctoral": "3年", "note": None},
+        "tuition": {"entrance_fee": 282000, "annual_fee": 535800, "currency": "JPY", "note": "国立大学统一标准"},
+        "application": {
+            "undergraduate": {"methods": ["EJU留考", "面试为主"], "eju_score_required": "650分以上", "note": "部分学部有笔试"},
+            "graduate": {"methods": ["联系教授", "出愿"], "note": "研究计划书要求高"}
+        },
+        "difficulty": {"level": 4, "stars": "★★★★☆", "description": "日本规模最大的国立大学之一，理科极强"},
+        "tags": ["日本规模最大", "理科强校", "关西重镇"],
+        "location": "大阪府"
+    },
+    {
+        "name": "东北大学",
+        "name_jp": "東北大学",
+        "type": "国立",
+        "category": "旧帝国大学",
+        "system": {"undergraduate": "4年", "master": "2年", "doctoral": "3年", "note": None},
+        "tuition": {"entrance_fee": 282000, "annual_fee": 535800, "currency": "JPY", "note": "国立大学统一标准"},
+        "application": {
+            "undergraduate": {"methods": ["EJU留考", "校内考"], "eju_score_required": "650分以上"},
+            "graduate": {"methods": ["材料审查", "面试"], "note": "拥有完善的英文项目"}
+        },
+        "difficulty": {"level": 4, "stars": "★★★★☆", "description": "东北地方霸主，材料学、理学世界顶尖"},
+        "tags": ["材料学世界顶尖", "理学强校", "鲁迅母校"],
+        "location": "宫城县"
+    },
+    {
+        "name": "名古屋大学",
+        "name_jp": "名古屋大学",
+        "type": "国立",
+        "category": "旧帝国大学",
+        "system": {"undergraduate": "4年", "master": "2年", "doctoral": "3年", "note": None},
+        "tuition": {"entrance_fee": 282000, "annual_fee": 535800, "currency": "JPY", "note": "国立大学统一标准"},
+        "application": {
+            "undergraduate": {"methods": ["EJU留考", "面试"], "eju_score_required": "620分以上"},
+            "graduate": {"methods": ["材料审查", "面试"], "note": "部分学部支持秋季入学，英语项目较多"}
+        },
+        "difficulty": {"level": 4, "stars": "★★★★", "description": "中部地区核心，丰田汽车合作紧密，工科强大"},
+        "tags": ["中部地区核心", "工科强大", "丰田合作"],
+        "location": "爱知县"
+    },
+    {
+        "name": "九州大学",
+        "name_jp": "九州大学",
+        "type": "国立",
+        "category": "旧帝国大学",
+        "system": {"undergraduate": "4年", "master": "2年", "doctoral": "3年", "note": None},
+        "tuition": {"entrance_fee": 282000, "annual_fee": 535800, "currency": "JPY", "note": "国立大学统一标准"},
+        "application": {
+            "undergraduate": {"methods": ["EJU留考", "小论文", "面试"], "eju_score_required": "600分以上"},
+            "graduate": {"methods": ["联系教授", "出愿"], "note": "需提前联系教授"}
+        },
+        "difficulty": {"level": 3, "stars": "★★★☆", "description": "九州地区第一，理工科实力雄厚"},
+        "tags": ["九州地区第一", "理工科强", "工科传统名校"],
+        "location": "福冈县"
+    },
+    {
+        "name": "北海道大学",
+        "name_jp": "北海道大学",
+        "type": "国立",
+        "category": "旧帝国大学",
+        "system": {"undergraduate": "4年", "master": "2年", "doctoral": "3年", "note": None},
+        "tuition": {"entrance_fee": 282000, "annual_fee": 535800, "currency": "JPY", "note": "国立大学统一标准"},
+        "application": {
+            "undergraduate": {"methods": ["EJU留考", "面试"], "eju_score_required": "600分以上", "note": "重视综合素质"},
+            "graduate": {"methods": ["联系教授", "出愿"], "note": "农学、生命科学极强"}
+        },
+        "difficulty": {"level": 3, "stars": "★★★☆", "description": "北日本旗舰大学，校园优美，入学门槛相对七帝中稍低"},
+        "tags": ["日本最大校园", "农学顶尖", "环境优美"],
+        "location": "北海道"
+    },
+    {
+        "name": "东京工业大学",
+        "name_jp": "東京科学大学",
+        "type": "国立",
+        "category": "理工专精",
+        "system": {"undergraduate": "4年", "master": "2年", "doctoral": "3年", "note": None},
+        "tuition": {"entrance_fee": 282000, "annual_fee": 535800, "currency": "JPY", "note": "国立大学统一标准"},
+        "application": {
+            "undergraduate": {"methods": ["EJU留考(数学物理必考)", "面试"], "eju_score_required": "680分以上", "note": "分数要求极高"},
+            "graduate": {"methods": ["材料审查", "面试"], "note": "极其看重研究计划书"}
+        },
+        "difficulty": {"level": 5, "stars": "★★★★★", "description": "日本理工科专精顶峰，媲美东大工学部"},
+        "tags": ["理工科顶峰", "东工大", "纯理工院校"],
+        "location": "东京都"
+    },
+    {
+        "name": "早稻田大学",
+        "name_jp": "早稲田大学",
+        "type": "私立",
+        "category": "私立双雄",
+        "system": {"undergraduate": "4年", "master": "2年", "doctoral": "3年", "note": None},
+        "tuition": {"entrance_fee": 200000, "annual_fee_range": {"min": 1100000, "max": 1750000}, "currency": "JPY", "note": "政治经济学部较贵，理工学部最贵"},
+        "application": {
+            "undergraduate": {"methods": ["EJU留考", "面试/小论文", "英语项目(SILS, TAISI)"], "eju_score_required": "650分以上(王牌学部)"},
+            "graduate": {"methods": ["材料审查", "面试"], "note": "部分研究科可英文申请，对跨专业接受度高"}
+        },
+        "difficulty": {"level": 4, "stars": "★★★★☆", "description": "私立之首，政治经济、法学极难，部分学部适中"},
+        "tags": ["私立之首", "政治经济强", "校友网络庞大", "中国人最熟悉"],
+        "location": "东京都"
+    },
+    {
+        "name": "庆应义塾大学",
+        "name_jp": "慶應義塾大学",
+        "type": "私立",
+        "category": "私立双雄",
+        "system": {"undergraduate": "4年", "master": "2年", "doctoral": "3年", "note": None},
+        "tuition": {"entrance_fee": 200000, "annual_fee_range": {"min": 1100000, "max": 1900000}, "currency": "JPY", "note": "医学部学费极高，理工/经济较贵"},
+        "application": {
+            "undergraduate": {"methods": ["EJU留考", "书类筛选"], "eju_score_required": "650分以上(王牌学部)", "note": "部分学部仅需提交成绩，无笔试，侧重书类筛选"},
+            "graduate": {"methods": ["GIGA项目", "英文申请"], "note": "英语项目成熟，看重出身校背景"}
+        },
+        "difficulty": {"level": 4, "stars": "★★★★☆", "description": "贵族大学，经济、医学、理工极强，校友网络强大"},
+        "tags": ["贵族大学", "经济强校", "医学顶尖", "企业家校友多"],
+        "location": "东京都/神奈川县"
+    }
+]
+
+
 # 留学项目完整列表（项目页展示）
 ALL_PROGRAMS = [
     # 本科类
     {
-        "id": 1, "title": "日本本科入学（EJU备考 + 院校申请）",
-        "category": "本科", "location": "全国",
-        "fee": "约80-150万日元/年", "duration": "4年",
+        "id": 1, "title": "日本公立大学本科入学（EJU备考 + 院校申请）",
+        "category": "本科", "location": "全日本",
+        "fee": "1-3万元人民币", 
         "conditions": "高中毕业（或同等学历），按目标院校要求准备EJU/校内考等",
         "desc": "适合希望进入日本本科的同学：提供选校、备考规划、材料准备与面试辅导。"
     },
     {
         "id": 2, "title": "日本私立大学本科直考（校内考/面试）",
         "category": "本科", "location": "东京",
-        "fee": "约100-180万日元/年", "duration": "4年",
+        "fee": "1-3万元人民币", 
         "conditions": "高中毕业，满足目标院校语言/学术要求",
         "desc": "针对私立名校本科入学：校内考策略、面试训练、材料细节把控。"
     },
     {
         "id": 3, "title": "SGU英语授课本科项目",
         "category": "SGU", "location": "东京",
-        "fee": "约100-180万日元/年", "duration": "4年",
+        "fee": "2-3万元人民币", 
         "conditions": "高中毕业，托福80+或雅思6.0+，按项目要求准备材料",
         "desc": "无需日语，以英语成绩申请日本顶尖大学SGU项目，适合英语优秀的学生。"
     },
     # 硕士类
     {
         "id": 4, "title": "国公立大学研究生/修士升学（套磁+研究计划）",
-        "category": "硕士", "location": "全国",
-        "fee": "约50-80万日元/年", "duration": "2-3年",
+        "category": "硕士", "location": "全日本",
+        "fee": "2-3万元人民币", 
         "conditions": "本科毕业，具备明确研究方向；按院校要求提供语言成绩",
         "desc": "先以研究生（旁听生）身份入学或直接修士直考，提供研究计划书与套磁支持。"
     },
     {
         "id": 5, "title": "私立大学修士直考项目",
         "category": "硕士", "location": "东京",
-        "fee": "约80-150万日元/年", "duration": "2年",
+        "fee": "1-3万元人民币", 
         "conditions": "本科毕业，有相关专业背景；按目标院校要求准备",
         "desc": "针对早稻田、庆应等私立名校，提供笔试面试全方位辅导。"
     },
     {
         "id": 6, "title": "SGU英语授课硕士项目",
-        "category": "SGU", "location": "全国",
-        "fee": "约50-120万日元/年", "duration": "2年",
+        "category": "SGU", "location": "全日本",
+        "fee": "2-3万元人民币", 
         "conditions": "本科毕业，托福85+或雅思6.5+，GPA 3.0+",
         "desc": "全英语授课，无需日语，可申请东大、京大、东工大等顶尖学府。"
     },
     {
         "id": 7, "title": "研究计划书精修与模拟面试（研究生/修士）",
-        "category": "硕士", "location": "全国",
-        "fee": "定制报价", "duration": "4-8周",
+        "category": "硕士", "location": "全日本",
+        "fee": "定制报价", 
         "conditions": "明确专业方向与目标院校，提供现有材料或大纲",
         "desc": "适合已有目标院校的同学：强化研究逻辑、套磁表达与面试表现。"
     },
     {
         "id": 8, "title": "本科/研究生全流程签证与行前支持",
-        "category": "服务", "location": "全国",
-        "fee": "定制报价", "duration": "按进度",
+        "category": "额外服务", "location": "全日本",
+        "fee": "定制报价", 
         "conditions": "已获得录取/内诺或进入申请后期",
         "desc": "覆盖签证材料清单、时间线管理、住宿与行前准备建议，减少临门一脚风险。"
+    },
+    {
+        "id": 9, "title": "奖学金申请与学费减免申请",
+        "category": "额外服务", "location": "全日本",
+        "fee": "定制报价", 
+        "conditions": "已获得录取/内诺",
+        "desc": "减轻日本留学的开销压力，提供奖学金申请策略、材料准备与申请跟进支持。"
+    },
+    {
+        "id": 10, "title": "学校附近安心租房",
+        "category": "额外服务", "location": "全日本",
+        "fee": "定制报价", 
+        "conditions": "已获得录取/内诺",
+        "desc": "根据学长经验与推荐，选择合适的租房平台与房源，提供租房流程指导与注意事项，确保安全顺利入住。"
+    },
+    {
+        "id": 11, "title": "语言培训",
+        "category": "额外服务", "location": "全日本",
+        "fee": "定制报价", 
+        "conditions": "有无基础均可",
+        "desc": "根据入学需要提供语言培训服务，本团队老师都是名校毕业或高分考生，能针对性提升日语或英语成绩。"
+    },
+    {
+        "id": 12, "title": "专业课培训",
+        "category": "硕士", "location": "全日本",
+        "fee": "定制报价", 
+        "conditions": "有无基础均可",
+        "desc": "根据入学需要提供专业课培训服务，本团队老师都是名校毕业或高分考生，覆盖考试科目广泛能提供详细专业课辅导。"
     },
 ]
 
@@ -146,7 +355,7 @@ ALL_PROGRAMS = [
 MILESTONES = [
     {"year": "2020", "event": "团队成立，专注日本研究生升学规划与申请辅导"},
     {"year": "2022", "event": "业务拓展至本科及硕士申请, 留学成功人数超10人"},
-    {"year": "2024", "event": "开设线上日语培训课程，服务范围覆盖全国"},
+    {"year": "2024", "event": "开设线上日语培训课程，服务范围覆盖全日本"},
 ]
 
 # 团队成员数据
@@ -191,6 +400,16 @@ def index():
         "index.html",
         advantages=ADVANTAGES,
         hot_programs=HOT_PROGRAMS,
+    )
+
+
+@app.route("/introduction")  # 简介路由
+def introduction():
+    """渲染首页模板，传入优势数据和热门项目"""
+    return render_template(
+        "introduction.html",
+        introductions=INTRODUCTIONS,
+        universities=TOP_UNIVERSITIES,
     )
 
 
