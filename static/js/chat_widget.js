@@ -120,6 +120,11 @@
   });
   closeBtn.addEventListener('click', close);
 
+  // 首页自动弹出聊天窗口
+  if (window.location.pathname === '/') {
+    setTimeout(() => open(), 1500);
+  }
+
   sendBtn.addEventListener('click', send);
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') send();

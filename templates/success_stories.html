@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+{% block title %}成功案例{% endblock %}
+
+{% block content %}
+<!-- ========== 页面顶部 Banner ========== -->
+<section class="page-banner">
+    <div class="container">
+        <h1>🎓 成功案例</h1>
+        <p>他们通过樱路留学，成功踏上日本名校之路</p>
+    </div>
+</section>
+
+<!-- ========== 数据统计条 ========== -->
+<section class="stats-bar">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 col-6">
+                <div class="stat-box">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">名校录取人数</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-box">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">录取院校数</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-box">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">申请成功率</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-box">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">学员满意度</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== 录取院校展示 ========== -->
+<section class="section-padding" style="background: var(--bg-light);">
+    <div class="container">
+        <div class="section-title">
+            <h2>录取院校</h2>
+            <p>我们的学员成功进入以下日本顶尖学府</p>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-4 col-md-6">
+                <div class="university-highlight-card fade-in-up delay-1">
+                    <div class="uni-icon">🏛️</div>
+                    <h4>筑波大学</h4>
+                    <p class="uni-jp">筑波大学</p>
+                    <p class="uni-desc">日本顶尖综合性国立大学，教育学、计算机科学等领域实力强劲</p>
+                    <span class="uni-count">1 名学员录取</span>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="university-highlight-card fade-in-up delay-2">
+                    <div class="uni-icon">🏛️</div>
+                    <h4>东北大学</h4>
+                    <p class="uni-jp">東北大学</p>
+                    <p class="uni-desc">旧帝国大学之一，材料学、信息科学世界顶尖，鲁迅母校</p>
+                    <span class="uni-count">1 名学员录取</span>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="university-highlight-card fade-in-up delay-3">
+                    <div class="uni-icon">🏛️</div>
+                    <h4>大阪大学</h4>
+                    <p class="uni-jp">大阪大学</p>
+                    <p class="uni-desc">日本规模最大的国立大学之一，理工科极强，关西重镇</p>
+                    <span class="uni-count">1 名学员录取</span>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="university-highlight-card fade-in-up delay-4">
+                    <div class="uni-icon">🏛️</div>
+                    <h4>名古屋大学</h4>
+                    <p class="uni-jp">名古屋大学</p>
+                    <p class="uni-desc">旧帝国大学之一，工学、经济学领域享有盛誉，与丰田深度合作</p>
+                    <span class="uni-count">1 名学员录取</span>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="university-highlight-card fade-in-up delay-1">
+                    <div class="uni-icon">🏛️</div>
+                    <h4>东京工业大学</h4>
+                    <p class="uni-jp">東京科学大学</p>
+                    <p class="uni-desc">日本理工科最高峰，与东大工学部并列，纯理工类顶级学府</p>
+                    <span class="uni-count">1 名学员录取</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== 学员案例详情 ========== -->
+<section class="section-padding" style="background: var(--bg-white);">
+    <div class="container">
+        <div class="section-title">
+            <h2>学员故事</h2>
+            <p>听听他们的留学申请经历与心得分享</p>
+        </div>
+
+        {% for story in stories %}
+        <div class="story-card fade-in-up delay-{{ (loop.index % 4) + 1 }}" {% if not loop.last
+            %}style="margin-bottom: 40px;" {% endif %}>
+            <div class="row g-0">
+                <!-- 左侧：基本信息 -->
+                <div class="col-lg-4">
+                    <div class="story-profile">
+                        <div class="story-avatar">
+                            <img src="{{ url_for('static', filename='images/' + story.avatar_image) }}"
+                                alt="{{ story.name }}">
+                        </div>
+                        <h3 class="story-name">{{ story.name }}</h3>
+                        <div class="story-university-tag">
+                            <i class="bi bi-building me-1"></i>{{ story.university }}
+                        </div>
+                        <div class="story-major">{{ story.major }}</div>
+                        <div class="story-admission">
+                            <i class="bi bi-calendar-check me-1"></i>{{ story.admission_year }} 入学
+                        </div>
+
+                        <!-- 背景信息 -->
+                        <div class="story-bg-info">
+                            <div class="bg-item">
+                                <i class="bi bi-mortarboard me-2"></i>
+                                <span>{{ story.background.undergraduate }} · {{ story.background.ug_major }}</span>
+                            </div>
+                            <div class="bg-item">
+                                <i class="bi bi-bar-chart me-2"></i>
+                                <span>GPA: {{ story.background.gpa }}</span>
+                            </div>
+                            <div class="bg-item">
+                                <i class="bi bi-translate me-2"></i>
+                                <span>{{ story.background.japanese }}</span>
+                            </div>
+                            {% if story.background.english %}
+                            <div class="bg-item">
+                                <i class="bi bi-globe me-2"></i>
+                                <span>{{ story.background.english }}</span>
+                            </div>
+                            {% endif %}
+                            {% if story.background.other %}
+                            <div class="bg-item">
+                                <i class="bi bi-star me-2"></i>
+                                <span>{{ story.background.other }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：采访内容 -->
+                <div class="col-lg-8">
+                    <div class="story-interview">
+                        <h5 class="interview-title">
+                            <i class="bi bi-chat-quote me-2"></i>采访实录
+                        </h5>
+                        <div class="accordion" id="interview-{{ loop.index }}">
+                            {% set story_idx = loop.index %}
+                            {% for qa in story.interview %}
+                            <div class="accordion-item story-accordion-item">
+                                <h2 class="accordion-header">
+                                    <button
+                                        class="accordion-button story-accordion-btn {% if not loop.first %}collapsed{% endif %}"
+                                        type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#qa-{{ story_idx }}-{{ loop.index }}">
+                                        <span class="q-badge">Q{{ loop.index }}</span>
+                                        {{ qa.q }}
+                                    </button>
+                                </h2>
+                                <div id="qa-{{ story_idx }}-{{ loop.index }}"
+                                    class="accordion-collapse collapse {% if loop.first %}show{% endif %}"
+                                    data-bs-parent="#interview-{{ story_idx }}">
+                                    <div class="accordion-body story-answer">
+                                        {{ qa.a }}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                        </div>
+
+                        <!-- 寄语 -->
+                        <div class="story-message">
+                            <i class="bi bi-chat-heart me-2"></i>
+                            <strong>给学弟学妹的寄语：</strong>「{{ story.message }}」
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- ========== CTA ========== -->
+<section class="section-padding" style="background: var(--bg-light);">
+    <div class="container text-center">
+        <h3 style="font-weight: 800; margin-bottom: 16px;">你也想成为下一个成功案例吗？</h3>
+        <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 1.05rem;">
+            立即联系我们，开启你的日本名校留学之旅
+        </p>
+        <a href="{{ url_for('contact') }}" class="btn btn-primary-custom btn-lg">
+            <i class="bi bi-send me-2"></i>立即咨询
+        </a>
+    </div>
+</section>
+{% endblock %}
