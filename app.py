@@ -401,10 +401,10 @@ SUCCESS_STORIES = [
         "degree": "修士",
         "admission_year": "2024年4月",
         "background": {
-            "undergraduate": "华中师范大学",
+            "undergraduate": "郑州师范学院",
             "ug_major": "教育学",
-            "gpa": "3.5/4.0",
-            "japanese": "JLPT N1 (152分)",
+            "gpa": "2.5/4.0",
+            "japanese": "JLPT N2 (125分)",
             "english": "",
             "other": "本科期间参与支教项目2次"
         },
@@ -438,11 +438,11 @@ SUCCESS_STORIES = [
         "degree": "修士",
         "admission_year": "2024年10月",
         "background": {
-            "undergraduate": "南京邮电大学",
+            "undergraduate": "江西科技师范大学",
             "ug_major": "软件工程",
-            "gpa": "3.3/4.0",
+            "gpa": "3.1/4.0",
             "japanese": "JLPT N2 (136分)",
-            "english": "TOEFL iBT 90",
+            "english": "TOEFL iBT 88",
             "other": "参与过2个校级科研项目"
         },
         "interview": [
@@ -475,11 +475,11 @@ SUCCESS_STORIES = [
         "degree": "修士",
         "admission_year": "2023年4月",
         "background": {
-            "undergraduate": "大连理工大学",
+            "undergraduate": "泰山学院",
             "ug_major": "机械设计制造及其自动化",
-            "gpa": "3.6/4.0",
-            "japanese": "JLPT N2 (145分)",
-            "english": "TOEIC 780",
+            "gpa": "2.6/4.0",
+            "japanese": "JLPT N2 (115分)",
+            "english": "TOEIC 760",
             "other": "曾获国家奖学金，参与机械臂控制系统研究项目"
         },
         "interview": [
@@ -512,10 +512,10 @@ SUCCESS_STORIES = [
         "degree": "修士",
         "admission_year": "2022年10月",
         "background": {
-            "undergraduate": "中南大学",
+            "undergraduate": "黑龙江科技大学",
             "ug_major": "金融学",
             "gpa": "2.4/4.0",
-            "japanese": "JLPT N1 (165分)",
+            "japanese": "JLPT N1 (115分)",
             "english": "",
             "other": "CFA一级通过，有半年日本交换留学经验"
         },

@@ -975,6 +975,13 @@ h6 {
     margin-bottom: 16px;
 }
 
+.university-highlight-card .uni-icon img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
 .university-highlight-card h4 {
     font-size: 1.3rem;
     font-weight: 800;
