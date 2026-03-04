@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <!-- 页面标题：子模板可通过 block title 覆盖 -->
@@ -12,10 +13,12 @@
     <!-- Bootstrap Icons（CDN引入图标库） -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Google Fonts - Noto Sans SC（中文字体优化） -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <!-- 自定义样式表 -->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 </head>
+
 <body>
 
     <!-- ========== 顶部导航栏 ========== -->
@@ -34,23 +37,27 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}"
-                           href="{{ url_for('index') }}">首页</a>
+                            href="{{ url_for('index') }}">首页</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}"
-                           href="{{ url_for('introduction') }}">留学简介</a>
+                        <a class="nav-link {% if request.endpoint == 'introduction' %}active{% endif %}"
+                            href="{{ url_for('introduction') }}">留学简介</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'programs' %}active{% endif %}"
-                           href="{{ url_for('programs') }}">留学项目</a>
+                            href="{{ url_for('programs') }}">留学项目</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'about' %}active{% endif %}"
-                           href="{{ url_for('about') }}">关于我们</a>
+                            href="{{ url_for('about') }}">关于我们</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'success_stories' %}active{% endif %}"
+                            href="{{ url_for('success_stories') }}">成功案例</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'contact' %}active{% endif %}"
-                           href="{{ url_for('contact') }}">联系方式</a>
+                            href="{{ url_for('contact') }}">联系方式</a>
                     </li>
                 </ul>
             </div>
@@ -77,6 +84,7 @@
                         <li class="mb-2"><a href="{{ url_for('introduction') }}">留学简介</a></li>
                         <li class="mb-2"><a href="{{ url_for('programs') }}">留学项目</a></li>
                         <li class="mb-2"><a href="{{ url_for('about') }}">关于我们</a></li>
+                        <li class="mb-2"><a href="{{ url_for('success_stories') }}">成功案例</a></li>
                         <li class="mb-2"><a href="{{ url_for('contact') }}">联系方式</a></li>
                     </ul>
                 </div>
@@ -94,9 +102,9 @@
                 <div class="col-lg-3 mb-4">
                     <h5>联系我们</h5>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><i class="bi bi-telephone me-2"></i>021-1234-5678</li>
-                        <li class="mb-2"><i class="bi bi-envelope me-2"></i>info@japan-study.example.com</li>
-                        <li class="mb-2"><i class="bi bi-wechat me-2"></i>JapanStudy2025</li>
+                        <li class="mb-2"><i class="bi bi-telephone me-2"></i>13367336095</li>
+                        <li class="mb-2"><i class="bi bi-envelope me-2"></i>luojiaj88@outlook.com</li>
+                        <!-- <li class="mb-2"><i class="bi bi-wechat me-2"></i>JapanStudy2026</li> -->
                     </ul>
                 </div>
             </div>
@@ -112,12 +120,11 @@
 
     <!-- ========== 悬浮智能聊天框（本地免费知识库版） ========== -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/chat_widget.css') }}">
-    <div id="sl-chat"
-         data-welcome="您好，我是留学小助手，有什么问题都可以咨询我哦！"
-         data-human-url="{{ url_for('contact') }}"></div>
+    <div id="sl-chat" data-welcome="您好，我是留学小助手，有什么问题都可以咨询我哦！" data-human-url="{{ url_for('contact') }}"></div>
     <script src="{{ url_for('static', filename='js/chat_widget.js') }}"></script>
 
     <!-- 页面自定义脚本（子模板可扩展） -->
     {% block scripts %}{% endblock %}
 </body>
+
 </html>
